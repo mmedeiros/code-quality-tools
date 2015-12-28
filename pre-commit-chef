@@ -44,6 +44,30 @@ STAGED_FILES.lines do |file|
   end
 end
 
+puts 'Running shellcheck...'
+`shellcheck -s >/dev/null 2>&1 `
+unless $CHILD_STATUS.success?
+  puts 'shellcheck NOT found... installing...'
+  `yes | brew install shellcheck`
+  unless $CHILD_STATUS.success?
+    puts 'shellcheck installation failure, please try'
+    puts '  brew install shellcheck'
+    puts 'to resolve'
+  end
+end
+
+# Get the names of (A)dded, (C)opied, (M)odified Bash files
+STAGED_FILES = `git diff-index --name-only --diff-filter=ACM HEAD -- '*.sh'`
+STAGED_FILES.lines do |file|
+  file.chomp! # remove carriage returns
+  puts "  Shellcheck validating file: #{file}"
+  shellcheck_output = `shellcheck #{ file }`
+  unless $CHILD_STATUS.success?
+    puts shellcheck_output
+    exit 1
+  end
+end
+
 puts 'Running foodcritic...'
 `foodcritic -V >/dev/null 2>&1 `
 unless $CHILD_STATUS.success?
