@@ -28,17 +28,6 @@ lint_checkers = {
   },
 }
 
-# check for whitespace errors
-git_ws_check = `git diff-index --check --cached HEAD --`
-unless $CHILD_STATUS.success?
-  puts git_ws_check
-  exitflag = 1
-end
-
-COOKBOOK_PATH = File.split `git rev-parse --show-toplevel`
-PARENT_PATH = COOKBOOK_PATH[0]
-COOKBOOK_NAME = COOKBOOK_PATH[1].chomp # remove trailing newline
-
 # Check the lint checkers and install if needed
 lint_checkers.each do |_check, params|
   puts "running #{params['check_command']}"
@@ -57,7 +46,7 @@ end
 
 # Get the names of (A)dded, (C)opied, (M)odified files
 STAGED_FILES = `git diff-index --name-only --diff-filter=ACM HEAD`
-#STAGED_FILES = `git diff-index --name-only --diff-filter=ACM HEAD -- '*.rb'`
+
 # Iterate over the list and run each relevant lint check
 STAGED_FILES.lines do |file|
   file.chomp! # remove carriage returns
@@ -71,6 +60,18 @@ STAGED_FILES.lines do |file|
       end
     end
   end
+end
+
+# Individual checks
+COOKBOOK_PATH = File.split `git rev-parse --show-toplevel`
+PARENT_PATH = COOKBOOK_PATH[0]
+COOKBOOK_NAME = COOKBOOK_PATH[1].chomp # remove trailing newline
+
+# check for whitespace errors
+git_ws_check = `git diff-index --check --cached HEAD --`
+unless $CHILD_STATUS.success?
+  puts git_ws_check
+  exitflag = 1
 end
 
 puts 'Running knife...'
