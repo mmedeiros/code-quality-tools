@@ -7,7 +7,7 @@ exitflag = 0
 lint_checkers = {
   'foodcritic' => {
     'name'              => 'foodcritic',
-    'manual_install'    => 'gem install rubocop',
+    'manual_install'    => 'gem install foodcritic --no-ri --no-rdoc',
     'automated_install' => 'yes | gem install foodcritic --no-ri --no-rdoc',
     'check_command'     => 'foodcritic -V >/dev/null 2>&1',
     'extension'         => 'rb',
@@ -42,7 +42,7 @@ COOKBOOK_NAME = COOKBOOK_PATH[1].chomp # remove trailing newline
 # Check the lint checkers and install if needed
 lint_checkers.each do |_check, params|
   puts "running #{params['check_command']}"
-  exec "#{params['check_command']}"
+  `"#{params['check_command']}"`
   unless $CHILD_STATUS.success?
     puts "#{params['check_command']} NOT found... installing..."
     exec "#{params['automated_install']}"
