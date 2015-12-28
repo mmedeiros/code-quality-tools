@@ -42,7 +42,7 @@ COOKBOOK_NAME = COOKBOOK_PATH[1].chomp # remove trailing newline
 # Check the lint checkers and install if needed
 lint_checkers.each do |_check, params|
   puts "running #{params['check_command']}"
-  `"#{params['check_command']}"`
+  system "#{params['check_command']}"
   unless $CHILD_STATUS.success?
     puts "#{params['check_command']} NOT found... installing..."
     exec "#{params['automated_install']}"
@@ -55,12 +55,13 @@ lint_checkers.each do |_check, params|
   end
 end
 
-# Get the names of (A)dded, (C)opied, (M)odified Ruby files
+# Get the names of (A)dded, (C)opied, (M)odified files
 STAGED_FILES = `git diff-index --name-only --diff-filter=ACM HEAD`
 #STAGED_FILES = `git diff-index --name-only --diff-filter=ACM HEAD -- '*.rb'`
+# Iterate over the list and run each relevant lint check
 STAGED_FILES.lines do |file|
   file.chomp! # remove carriage returns
-  lint_checkers do |_check, params|
+  lint_checkers.each do |_check, params|
     if file =~ /#{params['extension']}/
       puts "  #{params['name']} validating file: #{file}"
       lint_check_output = "#{params['name']} #{file}"
