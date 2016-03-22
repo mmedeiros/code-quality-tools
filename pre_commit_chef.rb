@@ -10,22 +10,22 @@ lint_checkers = {
     'manual_install'    => 'gem install foodcritic --no-ri --no-rdoc',
     'automated_install' => 'yes | gem install foodcritic --no-ri --no-rdoc',
     'check_command'     => 'foodcritic -V >/dev/null 2>&1',
-    'extension'         => 'rb',
+    'extension'         => 'rb'
   },
   'rubocop' => {
     'name'              => 'rubocop',
     'manual_install'    => 'gem install rubocop',
     'automated_install' => 'yes | gem install rubocop --no-ri --no-rdoc',
     'check_command'     => 'rubocop -s >/dev/null 2>&1',
-    'extension'         => 'rb',
+    'extension'         => 'rb'
   },
   'shellcheck' => {
     'name'              => 'shellcheck',
     'manual_install'    => 'brew install shellcheck',
     'automated_install' => 'yes | brew install shellcheck',
     'check_command'     => 'which shellcheck >/dev/null 2>&1',
-    'extension'         => 'sh',
-  },
+    'extension'         => 'sh'
+  }
 }
 
 # Check the lint checkers and install if needed
